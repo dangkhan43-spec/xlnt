@@ -45,25 +45,24 @@
             cursor: grab;
             background-image: 
                 radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.08) 0%, transparent 80%),
-                linear-gradient(to right, rgba(30, 41, 59, 0.2) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(30, 41, 59, 0.2) 1px, transparent 1px);
-            background-size: 100% 100%, 50px 50px, 50px 50px;
+                linear-gradient(to right, rgba(30, 41, 59, 0.25) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(30, 41, 59, 0.25) 1px, transparent 1px);
+            background-size: 100% 100%, 60px 60px, 60px 60px;
         }
         .canvas-container:active {
             cursor: grabbing;
         }
         .node-card {
-            transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            transition: box-shadow 0.2s ease, border-color 0.2s ease;
             backdrop-filter: blur(16px);
         }
         .node-card:hover {
-            transform: translateY(-2px) scale(1.01);
-            box-shadow: 0 0 30px rgba(56, 189, 248, 0.4), 0 10px 25px -5px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 0 35px rgba(56, 189, 248, 0.45), 0 10px 25px -5px rgba(0, 0, 0, 0.9);
             border-color: #38bdf8;
         }
         /* High visibility glowing SVG lines */
         .mindmap-line {
-            filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.85));
+            filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.9));
         }
         /* Custom scrollbar */
         ::-webkit-scrollbar {
@@ -120,12 +119,12 @@
     </header>
 
     <div class="canvas-container overflow-hidden relative flex-1" id="canvasContainer">
-        <!-- SVG Layer for Ultra-Sharp Glowing Connector Lines -->
-        <svg id="mindmapLines" class="absolute inset-0 w-full h-full pointer-events-none z-0"></svg>
-        
-        <!-- Transformable Workspace for Zoom/Pan -->
-        <div id="mindmapWorkspace" class="absolute inset-0 z-10 transform-origin-center transition-transform duration-75 ease-out">
-            <!-- Nodes rendered dynamically -->
+        <!-- Unified Transformable Workspace containing both SVG lines and DOM Nodes -->
+        <div id="mindmapWorkspace" class="absolute inset-0 z-10 w-[5000px] h-[5000px]" style="transform-origin: 0 0;">
+            <!-- SVG Layer for Ultra-Sharp Glowing Connector Lines -->
+            <svg id="mindmapLines" class="absolute inset-0 w-full h-full pointer-events-none z-0"></svg>
+            <!-- Nodes Container -->
+            <div id="nodesContainer" class="absolute inset-0 pointer-events-none z-10"></div>
         </div>
     </div>
 
@@ -200,14 +199,12 @@
             title: "TỔNG QUAN XỬ LÝ NƯỚC THẢI\nPhương pháp Cơ học",
             type: "root",
             icon: "fa-water",
-            color: "from-cyan-400 to-blue-600",
             children: [
                 {
                     id: "muc-dich",
                     title: "1. Mục đích của phương pháp",
                     type: "branch",
                     icon: "fa-bullseye",
-                    color: "from-blue-500 to-cyan-500",
                     collapsed: false,
                     children: [
                         {
@@ -241,7 +238,6 @@
                     title: "2. Bản chất của phương pháp",
                     type: "branch",
                     icon: "fa-atom",
-                    color: "from-cyan-500 to-teal-500",
                     collapsed: false,
                     children: [
                         {
@@ -275,7 +271,6 @@
                     title: "3. Phân loại công trình & Mục đích",
                     type: "branch",
                     icon: "fa-industry",
-                    color: "from-teal-500 to-emerald-500",
                     collapsed: false,
                     children: [
                         {
@@ -364,11 +359,11 @@
         let startY = 0;
 
         const workspace = document.getElementById('mindmapWorkspace');
+        const nodesContainer = document.getElementById('nodesContainer');
         const container = document.getElementById('canvasContainer');
 
         function updateTransform() {
             workspace.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
-            drawLines();
         }
 
         function zoomIn() {
@@ -383,8 +378,8 @@
 
         function resetView() {
             scale = 1;
-            panX = container.clientWidth / 2 - 500;
-            panY = container.clientHeight / 2 - 340;
+            panX = container.clientWidth / 2 - 1200;
+            panY = container.clientHeight / 2 - 1000;
             updateTransform();
         }
 
@@ -440,16 +435,16 @@
             updateTransform();
         }, { passive: false });
 
-        // Render Mindmap Nodes
-        function renderMindmap() {
-            workspace.innerHTML = '';
+        // Coordinates configuration in workspace space (centered around 2400, 2400)
+        const rootX = 2400;
+        const rootY = 2400;
 
-            const rootX = 500;
-            const rootY = 340;
+        function renderMindmap() {
+            nodesContainer.innerHTML = '';
 
             // Render Root
             const rootEl = createNodeElement(mindmapData, rootX, rootY, true);
-            workspace.appendChild(rootEl);
+            nodesContainer.appendChild(rootEl);
 
             // Render Branches
             mindmapData.children.forEach((branch, index) => {
@@ -457,18 +452,18 @@
                 let branchY = rootY;
 
                 if (index === 0) {
-                    branchX = rootX - 450;
-                    branchY = rootY - 190;
+                    branchX = rootX - 520;
+                    branchY = rootY - 260;
                 } else if (index === 1) {
-                    branchX = rootX - 450;
-                    branchY = rootY + 190;
+                    branchX = rootX - 520;
+                    branchY = rootY + 260;
                 } else if (index === 2) {
-                    branchX = rootX + 480;
+                    branchX = rootX + 550;
                     branchY = rootY;
                 }
 
                 const branchEl = createNodeElement(branch, branchX, branchY, false);
-                workspace.appendChild(branchEl);
+                nodesContainer.appendChild(branchEl);
 
                 // Render Leaf Children if branch is not collapsed
                 if (!branch.collapsed && branch.children) {
@@ -477,20 +472,20 @@
                         let leafY = branchY;
 
                         if (branch.id === 'muc-dich') {
-                            leafX = branchX - 370;
-                            leafY = branchY - 125 + (leafIndex * 125);
+                            leafX = branchX - 420;
+                            leafY = branchY - 140 + (leafIndex * 140);
                         } else if (branch.id === 'ban-chat') {
-                            leafX = branchX - 370;
-                            leafY = branchY - 105 + (leafIndex * 110);
+                            leafX = branchX - 420;
+                            leafY = branchY - 120 + (leafIndex * 120);
                         } else if (branch.id === 'cong-trinh') {
                             const col = leafIndex % 2;
                             const row = Math.floor(leafIndex / 2);
-                            leafX = branchX + 400 + (col * 360);
-                            leafY = branchY - 260 + (row * 84);
+                            leafX = branchX + 440 + (col * 380);
+                            leafY = branchY - 280 + (row * 92);
                         }
 
                         const leafEl = createNodeElement(leaf, leafX, leafY, false);
-                        workspace.appendChild(leafEl);
+                        nodesContainer.appendChild(leafEl);
                     });
                 }
             });
@@ -506,17 +501,17 @@
                 el.style.width = '320px';
                 el.style.left = `${x - 160}px`;
                 el.style.top = `${y - 55}px`;
-                el.className = `node-card absolute rounded-2xl border-2 border-cyan-400 bg-gradient-to-tr from-slate-950 via-slate-900 to-cyan-950 p-4 flex items-center space-x-3.5 z-20 shadow-2xl shadow-cyan-500/30 text-white`;
+                el.className = `node-card absolute rounded-2xl border-2 border-cyan-400 bg-gradient-to-tr from-slate-950 via-slate-900 to-cyan-950 p-4 flex items-center space-x-3.5 z-20 shadow-2xl shadow-cyan-500/30 text-white pointer-events-auto`;
             } else if (node.type === 'branch') {
                 el.style.width = '320px';
                 el.style.left = `${x - 160}px`;
                 el.style.top = `${y - 45}px`;
-                el.className = `node-card absolute rounded-2xl border border-slate-700 bg-darkCard/95 p-4 flex items-center space-x-3.5 z-20 shadow-xl text-slate-100 border-l-4 border-l-cyan-400 font-semibold`;
+                el.className = `node-card absolute rounded-2xl border border-slate-700 bg-darkCard/95 p-4 flex items-center space-x-3.5 z-20 shadow-xl text-slate-100 border-l-4 border-l-cyan-400 font-semibold pointer-events-auto`;
             } else {
-                el.style.width = '330px';
-                el.style.left = `${x - 165}px`;
-                el.style.top = `${y - 35}px`;
-                el.className = `node-card absolute rounded-2xl border border-slate-800 bg-slate-900/95 p-3.5 flex items-center space-x-3 z-20 shadow-lg text-slate-200 text-xs hover:border-cyan-400`;
+                el.style.width = '340px';
+                el.style.left = `${x - 170}px`;
+                el.style.top = `${y - 38}px`;
+                el.className = `node-card absolute rounded-2xl border border-slate-800 bg-slate-900/95 p-3.5 flex items-center space-x-3 z-20 shadow-lg text-slate-200 text-xs hover:border-cyan-400 pointer-events-auto cursor-pointer`;
             }
 
             let iconBg = isRoot ? 'bg-cyan-400 text-slate-950 font-bold' : node.type === 'branch' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'bg-slate-800 text-cyan-400';
@@ -533,7 +528,7 @@
 
             if (node.type === 'branch') {
                 html += `
-                    <button onclick="toggleBranch(event, '${node.id}')" class="w-7 h-7 rounded-xl bg-slate-800 hover:bg-cyan-400 hover:text-slate-950 text-cyan-400 flex items-center justify-center transition flex-shrink-0 shadow-md border border-slate-700" title="Thu gọn / Mở rộng">
+                    <button onclick="toggleBranch(event, '${node.id}')" class="w-7 h-7 rounded-xl bg-slate-800 hover:bg-cyan-400 hover:text-slate-950 text-cyan-400 flex items-center justify-center transition flex-shrink-0 shadow-md border border-slate-700 cursor-pointer pointer-events-auto" title="Thu gọn / Mở rộng">
                         <i class="fa-solid ${node.collapsed ? 'fa-plus' : 'fa-minus'} text-xs"></i>
                     </button>
                 `;
@@ -554,26 +549,28 @@
             return el;
         }
 
-        // Draw glowing neon SVG connector lines anchored precisely from box borders
+        // Draw glowing neon SVG connector lines inside the exact same workspace coordinate space
         function drawLines() {
             const svg = document.getElementById('mindmapLines');
             svg.innerHTML = '';
 
-            const containerRect = container.getBoundingClientRect();
-
             function getNodeRect(nodeId) {
                 const el = document.getElementById(`node-${nodeId}`);
                 if (!el) return null;
-                const rect = el.getBoundingClientRect();
+                // Read coordinates directly from workspace layout rather than getBoundingClientRect to avoid zoom mismatch
+                const left = parseFloat(el.style.left);
+                const top = parseFloat(el.style.top);
+                const width = el.offsetWidth;
+                const height = el.offsetHeight;
                 return {
-                    left: (rect.left - containerRect.left - panX) / scale,
-                    right: (rect.right - containerRect.left - panX) / scale,
-                    top: (rect.top - containerRect.top - panY) / scale,
-                    bottom: (rect.bottom - containerRect.top - panY) / scale,
-                    x: (rect.left + rect.width / 2 - containerRect.left - panX) / scale,
-                    y: (rect.top + rect.height / 2 - containerRect.top - panY) / scale,
-                    width: rect.width / scale,
-                    height: rect.height / scale
+                    left: left,
+                    right: left + width,
+                    top: top,
+                    bottom: top + height,
+                    x: left + width / 2,
+                    y: top + height / 2,
+                    width: width,
+                    height: height
                 };
             }
 
@@ -601,7 +598,7 @@
             });
         }
 
-        // Calculate precise border intersection point between two rectangular nodes
+        // Calculate precise border intersection point between two rectangular nodes in workspace space
         function getBorderIntersection(rectA, rectB) {
             const centerA = { x: rectA.x, y: rectA.y };
             const centerB = { x: rectB.x, y: rectB.y };
@@ -610,14 +607,12 @@
             const dy = centerB.y - centerA.y;
 
             if (Math.abs(dx) > Math.abs(dy)) {
-                // Intersects left or right border of rectA
                 if (dx > 0) {
                     return { x: rectA.right, y: rectA.y };
                 } else {
                     return { x: rectA.left, y: rectA.y };
                 }
             } else {
-                // Intersects top or bottom border of rectA
                 if (dy > 0) {
                     return { x: rectA.x, y: rectA.bottom };
                 } else {
