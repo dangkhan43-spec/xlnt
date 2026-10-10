@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mindmap Xử lý Nước Thải - Phương pháp Cơ học</title>
+    <!-- Tailwind CSS with Dark Mode -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#02040a',
+                        darkCard: '#090d16',
+                        darkBorder: '#1e293b',
+                        neonCyan: '#38bdf8',
+                        neonBlue: '#3b82f6',
+                        neonAmber: '#fbbf24',
+                        neonEmerald: '#34d399',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Three.js for 3D animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #02040a;
+            color: #f8fafc;
+            overflow: hidden;
+            user-select: none;
+        }
+        .canvas-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            cursor: grab;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.08) 0%, transparent 80%),
+                linear-gradient(to right, rgba(30, 41, 59, 0.2) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(30, 41, 59, 0.2) 1px, transparent 1px);
+            background-size: 100% 100%, 50px 50px, 50px 50px;
+        }
+        .canvas-container:active {
+            cursor: grabbing;
+        }
+        .node-card {
+            transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            backdrop-filter: blur(16px);
+        }
+        .node-card:hover {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.4), 0 10px 25px -5px rgba(0, 0, 0, 0.8);
+            border-color: #38bdf8;
+        }
+        /* High visibility glowing SVG lines */
+        .mindmap-line {
+            filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.85));
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #060913;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="bg-darkBg text-slate-100 h-screen w-screen flex flex-col">
+
+    <header class="bg-darkCard/95 backdrop-blur-xl border-b border-slate-800 px-6 py-3.5 flex items-center justify-between z-30 shadow-2xl">
+        <div class="flex items-center space-x-3.5">
+            <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-cyan-400 to-blue-600 flex items-center justify-center text-slate-950 shadow-lg shadow-cyan-500/30 font-extrabold text-xl">
+                <i class="fa-solid fa-water"></i>
+            </div>
+            <div>
+                <h1 class="font-extrabold text-lg text-white tracking-wide flex items-center gap-2">
+                    Xử lý Nước Thải: Phương pháp Cơ học
+                    <span class="text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-full font-semibold uppercase tracking-wider">Presentation Dark Mode</span>
+                </h1>
+                <p class="text-xs text-slate-400">Sơ đồ tư duy tương tác chuyên sâu & Mô phỏng công trình 3D trực quan</p>
+            </div>
+        </div>
+        
+        <!-- Controls Toolbar -->
+        <div class="flex items-center space-x-2 bg-slate-900/95 p-1.5 rounded-2xl border border-slate-800 shadow-xl">
+            <button onclick="zoomIn()" class="p-2.5 hover:bg-slate-800 rounded-xl text-cyan-400 transition shadow-sm hover:scale-105" title="Phóng to (+)">
+                <i class="fa-solid fa-magnifying-glass-plus text-base"></i>
+            </button>
+            <button onclick="zoomOut()" class="p-2.5 hover:bg-slate-800 rounded-xl text-cyan-400 transition shadow-sm hover:scale-105" title="Thu nhỏ (-)">
+                <i class="fa-solid fa-magnifying-glass-minus text-base"></i>
+            </button>
+            <button onclick="resetView()" class="p-2.5 hover:bg-slate-800 rounded-xl text-cyan-400 transition shadow-sm hover:scale-105" title="Về vị trí ban đầu">
+                <i class="fa-solid fa-house text-base"></i>
+            </button>
+            <div class="h-5 w-px bg-slate-700 mx-1"></div>
+            <button onclick="expandAll()" class="px-3.5 py-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-bold rounded-xl shadow-sm transition">
+                <i class="fa-solid fa-angles-down mr-1"></i> Mở tất cả
+            </button>
+            <button onclick="collapseAll()" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl shadow-sm transition">
+                <i class="fa-solid fa-angles-up mr-1"></i> Thu gọn
+            </button>
+        </div>
+    </header>
+
+    <div class="canvas-container overflow-hidden relative flex-1" id="canvasContainer">
+        <!-- SVG Layer for Ultra-Sharp Glowing Connector Lines -->
+        <svg id="mindmapLines" class="absolute inset-0 w-full h-full pointer-events-none z-0"></svg>
+        
+        <!-- Transformable Workspace for Zoom/Pan -->
+        <div id="mindmapWorkspace" class="absolute inset-0 z-10 transform-origin-center transition-transform duration-75 ease-out">
+            <!-- Nodes rendered dynamically -->
+        </div>
+    </div>
+
+    <div id="detailModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 animate-in fade-in duration-200">
+        <div class="bg-darkCard border border-slate-700 rounded-2xl shadow-2xl w-full max-w-5xl max-h-[92vh] flex flex-col overflow-hidden">
+            <!-- Modal Header -->
+            <div class="px-6 py-4 bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 text-white flex items-center justify-between shadow-lg">
+                <div class="flex items-center space-x-3.5">
+                    <div id="modalIconContainer" class="w-11 h-11 rounded-xl bg-black/30 backdrop-blur-md flex items-center justify-center text-xl text-cyan-300 border border-white/20">
+                        <i class="fa-solid fa-info"></i>
+                    </div>
+                    <div>
+                        <h2 id="modalTitle" class="text-xl font-extrabold tracking-wide text-white">Tiêu đề công trình</h2>
+                        <p id="modalSubtitle" class="text-xs text-cyan-200">Thông số kỹ thuật chi tiết & Mô phỏng công trình</p>
+                    </div>
+                </div>
+                <button onclick="closeModal()" class="text-white/80 hover:text-white p-2.5 rounded-xl hover:bg-white/10 transition">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body (Split: Info & 3D Three.js Canvas) -->
+            <div class="flex-1 overflow-y-auto p-6 grid grid-cols-1 lg:grid-cols-2 gap-6 bg-[#04070e]">
+                <!-- Textual Information -->
+                <div class="space-y-4">
+                    <div class="bg-darkCard p-5 rounded-2xl border border-slate-800 shadow-xl relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1.5 h-full bg-cyan-400"></div>
+                        <h3 class="text-xs font-bold text-cyan-400 uppercase tracking-widest mb-2 flex items-center">
+                            <i class="fa-solid fa-book-open mr-2"></i> Mô tả & Nguyên lý hoạt động
+                        </h3>
+                        <p id="modalDescription" class="text-slate-200 text-sm leading-relaxed">
+                            Đang tải nội dung...
+                        </p>
+                    </div>
+                    <div class="bg-darkCard p-5 rounded-2xl border border-slate-800 shadow-xl relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1.5 h-full bg-amber-400"></div>
+                        <h3 class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-3 flex items-center">
+                            <i class="fa-solid fa-gears mr-2"></i> Thông số kỹ thuật & Vai trò cốt lõi
+                        </h3>
+                        <div id="modalDetails" class="text-slate-300 text-sm space-y-2.5">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3D Interactive Simulation Box -->
+                <div class="bg-slate-950 rounded-2xl overflow-hidden shadow-2xl flex flex-col relative border border-slate-800 min-h-[350px]">
+                    <div class="absolute top-4 left-4 z-10 bg-slate-900/90 backdrop-blur-md px-3.5 py-1.5 rounded-full text-xs text-cyan-300 font-semibold flex items-center space-x-2 border border-cyan-500/40 shadow-lg">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                        <span id="canvas3dLabel">Mô phỏng 3D Công trình</span>
+                    </div>
+                    <div id="threeContainer" class="flex-1 w-full h-full"></div>
+                    <div class="absolute bottom-4 right-4 z-10 bg-slate-900/90 backdrop-blur-md px-3 py-1 rounded-xl text-[11px] text-slate-400 border border-slate-800">
+                        <i class="fa-solid fa-hand-pointer mr-1"></i> Kéo chuột để xoay mô hình 3D
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="px-6 py-3.5 bg-darkCard border-t border-slate-800 flex justify-end">
+                <button onclick="closeModal()" class="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-bold rounded-xl transition border border-slate-700">
+                    Đóng cửa sổ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Complete Mindmap Data Structure based on official wastewater treatment document
+        const mindmapData = {
+            id: "root",
+            title: "TỔNG QUAN XỬ LÝ NƯỚC THẢI\nPhương pháp Cơ học",
+            type: "root",
+            icon: "fa-water",
+            color: "from-cyan-400 to-blue-600",
+            children: [
+                {
+                    id: "muc-dich",
+                    title: "1. Mục đích của phương pháp",
+                    type: "branch",
+                    icon: "fa-bullseye",
+                    color: "from-blue-500 to-cyan-500",
+                    collapsed: false,
+                    children: [
+                        {
+                            id: "md-1",
+                            title: "Tách & loại bỏ tạp chất không hòa tan",
+                            type: "leaf",
+                            icon: "fa-filter",
+                            desc: "Giữ lại rác bẩn thô, cặn vô cơ nặng (cát, xỉ), cặn lơ lửng và các chất nổi (dầu mỡ, váng nổi) ra khỏi dòng nước thải.",
+                            specs: ["Loại bỏ tạp chất thô", "Tách cặn lơ lửng nặng", "Thu gom váng nổi và dầu mỡ"]
+                        },
+                        {
+                            id: "md-2",
+                            title: "Bảo vệ hệ thống công trình & thiết bị",
+                            type: "leaf",
+                            icon: "fa-shield-halved",
+                            desc: "Tránh làm tắc nghẽn đường ống, giảm mài mòn và hư hỏng máy bơm cũng như các thiết bị cơ khí quan trọng trong nhà máy.",
+                            specs: ["Chống tắc nghẽn đường ống hệ thống", "Giảm mài mòn cánh bơm và van khóa", "Kéo dài tuổi thọ thiết bị cơ khí"]
+                        },
+                        {
+                            id: "md-3",
+                            title: "Chuẩn bị cho bước xử lý tiếp theo",
+                            type: "leaf",
+                            icon: "fa-forward-step",
+                            desc: "Khắc phục tình trạng quá tải hoặc sốc tải (về lưu lượng và nồng độ chất ô nhiễm), tạo điều kiện thuận lợi và nâng cao hiệu quả cho các quá trình xử lý sinh học hoặc hóa lý phía sau.",
+                            specs: ["Ổn định lưu lượng và tải trọng ô nhiễm", "Ngăn ngừa sốc tải cho vi sinh vật", "Nâng cao hiệu suất xử lý sinh học/hóa lý"]
+                        }
+                    ]
+                },
+                {
+                    id: "ban-chat",
+                    title: "2. Bản chất của phương pháp",
+                    type: "branch",
+                    icon: "fa-atom",
+                    color: "from-cyan-500 to-teal-500",
+                    collapsed: false,
+                    children: [
+                        {
+                            id: "bc-1",
+                            title: "Tính chất quá trình vật lý",
+                            type: "leaf",
+                            icon: "fa-cube",
+                            desc: "Đây là phương pháp xử lý vật lý mà khi nước thải đi qua, hoàn toàn không làm thay đổi tính chất hóa học và sinh học của nước thải.",
+                            specs: ["Không làm thay đổi tính chất hóa học", "Không biến đổi sinh học", "Thuần túy tác động vật lý"]
+                        },
+                        {
+                            id: "bc-2",
+                            title: "Lực cản cơ học",
+                            type: "leaf",
+                            icon: "fa-bars",
+                            desc: "Giữ lại các tạp chất có kích thước lớn khi cho dòng nước đi qua các khe hở hoặc lưới chắn rác chuyên dụng.",
+                            specs: ["Dựa vào kích thước khe hở", "Hệ thống lưới chắn rác, lọc tinh", "Giữ lại vật thể và rác thô"]
+                        },
+                        {
+                            id: "bc-3",
+                            title: "Lực trọng trường, Ly tâm & Tuyển nổi",
+                            type: "leaf",
+                            icon: "fa-circle-down",
+                            desc: "Dựa vào sự chênh lệch tỷ trọng giữa cặn và nước để lắng các hạt cặn nặng xuống đáy (trọng trường) hoặc tuyển nổi các chất nhẹ nhờ lực ly tâm và bám dính bọt khí.",
+                            specs: ["Lắng trọng trường cặn nặng", "Tuyển nổi váng dầu mỡ", "Hỗ trợ lực ly tâm tách hạt"]
+                        }
+                    ]
+                },
+                {
+                    id: "cong-trinh",
+                    title: "3. Phân loại công trình & Mục đích",
+                    type: "branch",
+                    icon: "fa-industry",
+                    color: "from-teal-500 to-emerald-500",
+                    collapsed: false,
+                    children: [
+                        {
+                            id: "ct-1",
+                            title: "Song / Lưới chắn rác",
+                            type: "leaf",
+                            icon: "fa-bars-staggered",
+                            desc: "Giữ lại rác thô, chất thải dạng sợi và vật thể kích thước lớn (nilon, gỗ, giấy, rau cỏ) để bảo vệ máy bơm và mương dẫn không bị tắc nghẽn.",
+                            specs: ["Loại rác thô & vật thể lớn", "Bảo vệ bơm & hệ thống mương", "Khoảng cách khe hở tùy chọn"],
+                            modelType: "screen"
+                        },
+                        {
+                            id: "ct-2",
+                            title: "Máy nghiền rác",
+                            type: "leaf",
+                            icon: "fa-gear",
+                            desc: "Cắt hoặc nghiền nhỏ các loại rác thô ngay trong dòng chảy để chuyển qua các công trình xử lý phía sau hoặc công trình xử lý cặn.",
+                            specs: ["Cắt nhỏ rác hữu cơ/vô cơ", "Duy trì dòng chảy liên tục", "Giảm kích thước vật thể thô"],
+                            modelType: "grinder"
+                        },
+                        {
+                            id: "ct-3",
+                            title: "Bể lắng cát",
+                            type: "leaf",
+                            icon: "fa-mountain",
+                            desc: "Tách và loại bỏ các hạt cặn vô cơ nặng không tan (cát, xỉ than, mảnh thủy tinh có kích thước hạt > 0,2 mm và tỷ trọng khoảng 2,65) nhằm tránh mài mòn thiết bị.",
+                            specs: ["Tách hạt cát > 0,2 mm", "Tỷ trọng cặn ~ 2,65", "Tránh mài mòn thiết bị"],
+                            modelType: "grit"
+                        },
+                        {
+                            id: "ct-4",
+                            title: "Bể điều hòa",
+                            type: "leaf",
+                            icon: "fa-wave-square",
+                            desc: "Điều hòa lưu lượng và san đều nồng độ các chất ô nhiễm trong ngày, loại bỏ các cú sốc tải trọng cho các công trình xử lý sinh học phía sau.",
+                            specs: ["San bằng dao động lưu lượng", "Ổn định nồng độ chất ô nhiễm", "Ngăn ngừa sốc tải vi sinh"],
+                            modelType: "equalization"
+                        },
+                        {
+                            id: "ct-5",
+                            title: "Bể lắng đợt 1 (Sơ cấp)",
+                            type: "leaf",
+                            icon: "fa-layer-group",
+                            desc: "Sử dụng lực trọng trường để loại bỏ phần lớn cặn lơ lửng (SS) có khả năng lắng trước khi nước thải đi vào khối xử lý sinh học.",
+                            specs: ["Loại bỏ phần lớn cặn SS", "Dựa vào lắng trọng trường", "Chuẩn bị cho xử lý sinh học"],
+                            modelType: "settling"
+                        },
+                        {
+                            id: "ct-6",
+                            title: "Bể vớt dầu mỡ & Tuyển nổi",
+                            type: "leaf",
+                            icon: "fa-droplet",
+                            desc: "Tách các chất nhẹ hơn nước như dầu, mỡ, bọt váng và chất hoạt động bề mặt để hạn chế cản trở quá trình oxy hóa và giảm độc tính cho vi sinh vật.",
+                            specs: ["Tách dầu mỡ, váng nổi", "Hạn chế cản trở oxy hóa", "Giảm độc tính cho vi sinh"],
+                            modelType: "flotation"
+                        },
+                        {
+                            id: "ct-7",
+                            title: "Bể lọc cơ học / Lưới lọc tinh",
+                            type: "leaf",
+                            icon: "fa-filter-circle-dollar",
+                            desc: "Giữ lại các hạt cặn lơ lửng kích thước nhỏ còn sót lại sau bể lắng bằng các lớp vật liệu lọc để tăng độ trong của nước.",
+                            specs: ["Giữ cặn lơ lửng kích thước nhỏ", "Tăng độ trong của nước thải", "Sử dụng vật liệu lọc chuyên dụng"],
+                            modelType: "filter"
+                        },
+                        {
+                            id: "ct-8",
+                            title: "Bể tự hoại & Imhoff (2 vỏ)",
+                            type: "leaf",
+                            icon: "fa-box-archive",
+                            desc: "Thực hiện đồng thời việc lắng cơ học cặn lơ lửng ở ngăn trên và phân hủy kỵ khí lớp cặn lắng ngay ở ngăn/đáy công trình.",
+                            specs: ["Lắng cơ học kết hợp phân hủy kỵ khí", "Cấu tạo 2 vỏ chuyên biệt", "Tiết kiệm không gian xử lý"],
+                            modelType: "imhoff"
+                        }
+                    ]
+                }
+            ]
+        };
+
+        // Workspace panning and zooming state
+        let scale = 1;
+        let panX = 0;
+        let panY = 0;
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
+
+        const workspace = document.getElementById('mindmapWorkspace');
+        const container = document.getElementById('canvasContainer');
+
+        function updateTransform() {
+            workspace.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+            drawLines();
+        }
+
+        function zoomIn() {
+            scale = Math.min(scale * 1.2, 2.5);
+            updateTransform();
+        }
+
+        function zoomOut() {
+            scale = Math.max(scale / 1.2, 0.4);
+            updateTransform();
+        }
+
+        function resetView() {
+            scale = 1;
+            panX = container.clientWidth / 2 - 500;
+            panY = container.clientHeight / 2 - 340;
+            updateTransform();
+        }
+
+        // Mouse pan listeners
+        container.addEventListener('mousedown', (e) => {
+            if (e.target.closest('.node-card')) return;
+            isDragging = true;
+            startX = e.clientX - panX;
+            startY = e.clientY - panY;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            panX = e.clientX - startX;
+            panY = e.clientY - startY;
+            updateTransform();
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        // Touch pan support
+        container.addEventListener('touchstart', (e) => {
+            if (e.target.closest('.node-card')) return;
+            if (e.touches.length === 1) {
+                isDragging = true;
+                startX = e.touches[0].clientX - panX;
+                startY = e.touches[0].clientY - panY;
+            }
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            if (!isDragging || e.touches.length !== 1) return;
+            panX = e.touches[0].clientX - startX;
+            panY = e.touches[0].clientY - startY;
+            updateTransform();
+        });
+
+        window.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+
+        // Wheel zoom
+        container.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const factor = 1.1;
+            if (e.deltaY < 0) {
+                scale = Math.min(scale * factor, 2.5);
+            } else {
+                scale = Math.max(scale / factor, 0.4);
+            }
+            updateTransform();
+        }, { passive: false });
+
+        // Render Mindmap Nodes
+        function renderMindmap() {
+            workspace.innerHTML = '';
+
+            const rootX = 500;
+            const rootY = 340;
+
+            // Render Root
+            const rootEl = createNodeElement(mindmapData, rootX, rootY, true);
+            workspace.appendChild(rootEl);
+
+            // Render Branches
+            mindmapData.children.forEach((branch, index) => {
+                let branchX = rootX;
+                let branchY = rootY;
+
+                if (index === 0) {
+                    branchX = rootX - 450;
+                    branchY = rootY - 190;
+                } else if (index === 1) {
+                    branchX = rootX - 450;
+                    branchY = rootY + 190;
+                } else if (index === 2) {
+                    branchX = rootX + 480;
+                    branchY = rootY;
+                }
+
+                const branchEl = createNodeElement(branch, branchX, branchY, false);
+                workspace.appendChild(branchEl);
+
+                // Render Leaf Children if branch is not collapsed
+                if (!branch.collapsed && branch.children) {
+                    branch.children.forEach((leaf, leafIndex) => {
+                        let leafX = branchX;
+                        let leafY = branchY;
+
+                        if (branch.id === 'muc-dich') {
+                            leafX = branchX - 370;
+                            leafY = branchY - 125 + (leafIndex * 125);
+                        } else if (branch.id === 'ban-chat') {
+                            leafX = branchX - 370;
+                            leafY = branchY - 105 + (leafIndex * 110);
+                        } else if (branch.id === 'cong-trinh') {
+                            const col = leafIndex % 2;
+                            const row = Math.floor(leafIndex / 2);
+                            leafX = branchX + 400 + (col * 360);
+                            leafY = branchY - 260 + (row * 84);
+                        }
+
+                        const leafEl = createNodeElement(leaf, leafX, leafY, false);
+                        workspace.appendChild(leafEl);
+                    });
+                }
+            });
+
+            setTimeout(drawLines, 20);
+        }
+
+        function createNodeElement(node, x, y, isRoot = false) {
+            const el = document.createElement('div');
+            el.id = `node-${node.id}`;
+            
+            if (isRoot) {
+                el.style.width = '320px';
+                el.style.left = `${x - 160}px`;
+                el.style.top = `${y - 55}px`;
+                el.className = `node-card absolute rounded-2xl border-2 border-cyan-400 bg-gradient-to-tr from-slate-950 via-slate-900 to-cyan-950 p-4 flex items-center space-x-3.5 z-20 shadow-2xl shadow-cyan-500/30 text-white`;
+            } else if (node.type === 'branch') {
+                el.style.width = '320px';
+                el.style.left = `${x - 160}px`;
+                el.style.top = `${y - 45}px`;
+                el.className = `node-card absolute rounded-2xl border border-slate-700 bg-darkCard/95 p-4 flex items-center space-x-3.5 z-20 shadow-xl text-slate-100 border-l-4 border-l-cyan-400 font-semibold`;
+            } else {
+                el.style.width = '330px';
+                el.style.left = `${x - 165}px`;
+                el.style.top = `${y - 35}px`;
+                el.className = `node-card absolute rounded-2xl border border-slate-800 bg-slate-900/95 p-3.5 flex items-center space-x-3 z-20 shadow-lg text-slate-200 text-xs hover:border-cyan-400`;
+            }
+
+            let iconBg = isRoot ? 'bg-cyan-400 text-slate-950 font-bold' : node.type === 'branch' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'bg-slate-800 text-cyan-400';
+
+            let html = `
+                <div class="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center ${iconBg} text-base shadow-md">
+                    <i class="fa-solid ${node.icon}"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h4 class="font-extrabold tracking-tight truncate ${isRoot ? 'text-white text-sm whitespace-pre-line leading-snug' : node.type === 'branch' ? 'text-white text-sm' : 'text-slate-100 text-xs'}">${node.title}</h4>
+                    <p class="text-[10px] ${isRoot ? 'text-cyan-300 font-semibold' : node.type === 'branch' ? 'text-slate-400' : 'text-cyan-400 font-medium'}">${node.type === 'root' ? 'Mục lục tổng quan' : node.type === 'branch' ? `${node.children ? node.children.length : 0} nhánh nội dung` : '<i class="fa-solid fa-arrow-pointer mr-1"></i> Click xem chi tiết & 3D'}</p>
+                </div>
+            `;
+
+            if (node.type === 'branch') {
+                html += `
+                    <button onclick="toggleBranch(event, '${node.id}')" class="w-7 h-7 rounded-xl bg-slate-800 hover:bg-cyan-400 hover:text-slate-950 text-cyan-400 flex items-center justify-center transition flex-shrink-0 shadow-md border border-slate-700" title="Thu gọn / Mở rộng">
+                        <i class="fa-solid ${node.collapsed ? 'fa-plus' : 'fa-minus'} text-xs"></i>
+                    </button>
+                `;
+            }
+
+            el.innerHTML = html;
+
+            el.addEventListener('click', (e) => {
+                if (e.target.closest('button')) return;
+                if (node.type === 'leaf') {
+                    openDetailModal(node);
+                } else if (node.type === 'branch') {
+                    node.collapsed = !node.collapsed;
+                    renderMindmap();
+                }
+            });
+
+            return el;
+        }
+
+        // Draw glowing neon SVG connector lines anchored precisely from box borders
+        function drawLines() {
+            const svg = document.getElementById('mindmapLines');
+            svg.innerHTML = '';
+
+            const containerRect = container.getBoundingClientRect();
+
+            function getNodeRect(nodeId) {
+                const el = document.getElementById(`node-${nodeId}`);
+                if (!el) return null;
+                const rect = el.getBoundingClientRect();
+                return {
+                    left: (rect.left - containerRect.left - panX) / scale,
+                    right: (rect.right - containerRect.left - panX) / scale,
+                    top: (rect.top - containerRect.top - panY) / scale,
+                    bottom: (rect.bottom - containerRect.top - panY) / scale,
+                    x: (rect.left + rect.width / 2 - containerRect.left - panX) / scale,
+                    y: (rect.top + rect.height / 2 - containerRect.top - panY) / scale,
+                    width: rect.width / scale,
+                    height: rect.height / scale
+                };
+            }
+
+            const rootRect = getNodeRect('root');
+            if (!rootRect) return;
+
+            mindmapData.children.forEach(branch => {
+                const branchRect = getNodeRect(branch.id);
+                if (branchRect) {
+                    const startPoint = getBorderIntersection(rootRect, branchRect);
+                    const endPoint = getBorderIntersection(branchRect, rootRect);
+                    drawNeonCurve(svg, startPoint.x, startPoint.y, endPoint.x, endPoint.y, '#38bdf8', 3.5);
+
+                    if (!branch.collapsed && branch.children) {
+                        branch.children.forEach(leaf => {
+                            const leafRect = getNodeRect(leaf.id);
+                            if (leafRect) {
+                                const bStart = getBorderIntersection(branchRect, leafRect);
+                                const lEnd = getBorderIntersection(leafRect, branchRect);
+                                drawNeonCurve(svg, bStart.x, bStart.y, lEnd.x, lEnd.y, '#64748b', 2);
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        // Calculate precise border intersection point between two rectangular nodes
+        function getBorderIntersection(rectA, rectB) {
+            const centerA = { x: rectA.x, y: rectA.y };
+            const centerB = { x: rectB.x, y: rectB.y };
+
+            const dx = centerB.x - centerA.x;
+            const dy = centerB.y - centerA.y;
+
+            if (Math.abs(dx) > Math.abs(dy)) {
+                // Intersects left or right border of rectA
+                if (dx > 0) {
+                    return { x: rectA.right, y: rectA.y };
+                } else {
+                    return { x: rectA.left, y: rectA.y };
+                }
+            } else {
+                // Intersects top or bottom border of rectA
+                if (dy > 0) {
+                    return { x: rectA.x, y: rectA.bottom };
+                } else {
+                    return { x: rectA.x, y: rectA.top };
+                }
+            }
+        }
+
+        function drawNeonCurve(svg, x1, y1, x2, y2, color, strokeWidth) {
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            const dx = Math.abs(x2 - x1) * 0.5;
+            const dy = (y2 - y1) * 0.1;
+            const cx1 = x1 + (x2 > x1 ? dx : -dx);
+            const cy1 = y1 + dy;
+            const cx2 = x2 - (x2 > x1 ? dx : -dx);
+            const cy2 = y2 - dy;
+
+            const d = `M ${x1} ${y1} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x2} ${y2}`;
+            path.setAttribute('d', d);
+            path.setAttribute('stroke', color);
+            path.setAttribute('stroke-width', strokeWidth);
+            path.setAttribute('fill', 'none');
+            path.setAttribute('stroke-linecap', 'round');
+            path.setAttribute('class', 'mindmap-line');
+            svg.appendChild(path);
+        }
+
+        function toggleBranch(event, branchId) {
+            event.stopPropagation();
+            const branch = mindmapData.children.find(b => b.id === branchId);
+            if (branch) {
+                branch.collapsed = !branch.collapsed;
+                renderMindmap();
+            }
+        }
+
+        function expandAll() {
+            mindmapData.children.forEach(b => b.collapsed = false);
+            renderMindmap();
+        }
+
+        function collapseAll() {
+            mindmapData.children.forEach(b => b.collapsed = true);
+            renderMindmap();
+        }
+
+        // Three.js Simulation Integration
+        let currentRenderer = null;
+        let animationFrameId = null;
+
+        function openDetailModal(node) {
+            document.getElementById('modalTitle').innerText = node.title;
+            document.getElementById('modalDescription').innerText = node.desc || "Không có mô tả chi tiết.";
+            
+            const specsContainer = document.getElementById('modalDetails');
+            specsContainer.innerHTML = '';
+            if (node.specs && node.specs.length > 0) {
+                node.specs.forEach(spec => {
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center space-x-2.5 text-slate-200 bg-slate-900/90 p-3 rounded-xl border border-slate-800 shadow-sm';
+                    div.innerHTML = `<i class="fa-solid fa-circle-check text-cyan-400 text-xs"></i><span class="font-medium">${spec}</span>`;
+                    specsContainer.appendChild(div);
+                });
+            } else {
+                specsContainer.innerHTML = '<p class="text-slate-500 italic">Không có thông số đi kèm.</p>';
+            }
+
+            document.getElementById('canvas3dLabel').innerText = `Mô phỏng 3D: ${node.title}`;
+            document.getElementById('detailModal').classList.remove('hidden');
+
+            setTimeout(() => {
+                initThreeSimulation(node.modelType || 'default');
+            }, 100);
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').classList.add('hidden');
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+            if (currentRenderer && currentRenderer.domElement) {
+                document.getElementById('threeContainer').innerHTML = '';
+            }
+        }
+
+        function initThreeSimulation(modelType) {
+            const container3d = document.getElementById('threeContainer');
+            container3d.innerHTML = '';
+
+            const width = container3d.clientWidth || 450;
+            const height = container3d.clientHeight || 350;
+
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x02050b);
+
+            const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+            camera.position.set(5, 4, 6);
+            camera.lookAt(0, 0, 0);
+
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(width, height);
+            container3d.appendChild(renderer.domElement);
+            currentRenderer = renderer;
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
+            scene.add(ambientLight);
+
+            const dirLight = new THREE.DirectionalLight(0x38bdf8, 1.8);
+            dirLight.position.set(10, 20, 15);
+            scene.add(dirLight);
+
+            const group = new THREE.Group();
+            scene.add(group);
+
+            if (modelType === 'screen') {
+                // Song chắn rác 3D
+                const channelGeo = new THREE.BoxGeometry(4, 2, 2);
+                const channelMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, transparent: true, opacity: 0.75 });
+                group.add(new THREE.Mesh(channelGeo, channelMat));
+
+                for (let i = -1.5; i <= 1.5; i += 0.45) {
+                    const barGeo = new THREE.CylinderGeometry(0.06, 0.06, 2.3, 8);
+                    const barMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, metalness: 0.9, roughness: 0.1 });
+                    const bar = new THREE.Mesh(barGeo, barMat);
+                    bar.position.set(i, 0, 0);
+                    bar.rotation.z = 0.25;
+                    group.add(bar);
+                }
+            } else if (modelType === 'grit' || modelType === 'settling') {
+                // Bể lắng cát / cặn 3D
+                const basinGeo = new THREE.BoxGeometry(4.5, 2, 2.5);
+                const basinMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.5 });
+                group.add(new THREE.Mesh(basinGeo, basinMat));
+
+                const waterGeo = new THREE.PlaneGeometry(4.3, 2.3);
+                const waterMat = new THREE.MeshStandardMaterial({ color: 0x0ea5e9, transparent: true, opacity: 0.65, side: THREE.DoubleSide });
+                const water = new THREE.Mesh(waterGeo, waterMat);
+                water.rotation.x = -Math.PI / 2;
+                water.position.y = 0.6;
+                group.add(water);
+
+                for (let i = 0; i < 25; i++) {
+                    const pGeo = new THREE.SphereGeometry(0.07, 8, 8);
+                    const pMat = new THREE.MeshStandardMaterial({ color: 0xfbbf24, emissive: 0xd97706 });
+                    const particle = new THREE.Mesh(pGeo, pMat);
+                    particle.position.set((Math.random() - 0.5) * 3.8, 0.5 - Math.random() * 1.5, (Math.random() - 0.5) * 2);
+                    group.add(particle);
+                }
+            } else if (modelType === 'equalization') {
+                // Bể điều hòa với cánh khuấy 3D
+                const tankGeo = new THREE.CylinderGeometry(2, 2, 2.5, 32);
+                const tankMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.4 });
+                group.add(new THREE.Mesh(tankGeo, tankMat));
+
+                const shaftGeo = new THREE.CylinderGeometry(0.08, 0.08, 2.5, 8);
+                const shaftMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, metalness: 0.9 });
+                const shaft = new THREE.Mesh(shaftGeo, shaftMat);
+                shaft.position.y = 0.5;
+                group.add(shaft);
+
+                const bladeGeo = new THREE.BoxGeometry(2.2, 0.12, 0.45);
+                const blade = new THREE.Mesh(bladeGeo, shaftMat);
+                blade.position.y = -0.5;
+                group.add(blade);
+                group.userData.mixer = blade;
+            } else {
+                // Khối hình học 3D mặc định
+                const geo = new THREE.IcosahedronGeometry(1.8, 0);
+                const mat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, wireframe: true, emissive: 0x0284c7 });
+                group.add(new THREE.Mesh(geo, mat));
+            }
+
+            // Mouse rotate 3D
+            let isDrag3D = false;
+            let prevX = 0, prevY = 0;
+            renderer.domElement.addEventListener('mousedown', (e) => {
+                isDrag3D = true;
+                prevX = e.clientX;
+                prevY = e.clientY;
+            });
+            window.addEventListener('mousemove', (e) => {
+                if (!isDrag3D) return;
+                group.rotation.y += (e.clientX - prevX) * 0.01;
+                group.rotation.x += (e.clientY - prevY) * 0.01;
+                prevX = e.clientX;
+                prevY = e.clientY;
+            });
+            window.addEventListener('mouseup', () => { isDrag3D = false; });
+
+            function animate() {
+                animationFrameId = requestAnimationFrame(animate);
+                group.rotation.y += 0.006;
+                if (group.userData.mixer) {
+                    group.userData.mixer.rotation.y += 0.08;
+                }
+                renderer.render(scene, camera);
+            }
+            animate();
+        }
+
+        window.onload = function() {
+            resetView();
+            renderMindmap();
+            window.addEventListener('resize', () => { drawLines(); });
+        };
+    </script>
+</body>
+</html>
