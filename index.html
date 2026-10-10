@@ -377,15 +377,16 @@
         }
 
         function resetView() {
-            scale = 1;
-            panX = container.clientWidth / 2 - 1200;
-            panY = container.clientHeight / 2 - 1000;
+            scale = 0.85;
+            // Căn chỉnh vị trí ban đầu hoàn hảo hơn vào trung tâm màn hình
+            panX = container.clientWidth / 2 - 2400;
+            panY = container.clientHeight / 2 - 2400;
             updateTransform();
         }
 
-        // Mouse pan listeners
+        // Mouse pan listeners (Sửa lại để bắt sự kiện pan mượt mà trên toàn container)
         container.addEventListener('mousedown', (e) => {
-            if (e.target.closest('.node-card')) return;
+            if (e.target.closest('.node-card') || e.target.closest('button')) return;
             isDragging = true;
             startX = e.clientX - panX;
             startY = e.clientY - panY;
@@ -404,7 +405,7 @@
 
         // Touch pan support
         container.addEventListener('touchstart', (e) => {
-            if (e.target.closest('.node-card')) return;
+            if (e.target.closest('.node-card') || e.target.closest('button')) return;
             if (e.touches.length === 1) {
                 isDragging = true;
                 startX = e.touches[0].clientX - panX;
@@ -452,13 +453,13 @@
                 let branchY = rootY;
 
                 if (index === 0) {
-                    branchX = rootX - 520;
-                    branchY = rootY - 260;
+                    branchX = rootX - 550;
+                    branchY = rootY - 320;
                 } else if (index === 1) {
-                    branchX = rootX - 520;
-                    branchY = rootY + 260;
+                    branchX = rootX - 550;
+                    branchY = rootY + 320;
                 } else if (index === 2) {
-                    branchX = rootX + 550;
+                    branchX = rootX + 600;
                     branchY = rootY;
                 }
 
@@ -472,16 +473,15 @@
                         let leafY = branchY;
 
                         if (branch.id === 'muc-dich') {
-                            leafX = branchX - 420;
+                            leafX = branchX - 440;
                             leafY = branchY - 140 + (leafIndex * 140);
                         } else if (branch.id === 'ban-chat') {
-                            leafX = branchX - 420;
+                            leafX = branchX - 440;
                             leafY = branchY - 120 + (leafIndex * 120);
                         } else if (branch.id === 'cong-trinh') {
-                            const col = leafIndex % 2;
-                            const row = Math.floor(leafIndex / 2);
-                            leafX = branchX + 440 + (col * 380);
-                            leafY = branchY - 280 + (row * 92);
+                            // Sắp xếp nhánh 3 thành 1 cột dọc lần lượt từ trên xuống dưới
+                            leafX = branchX + 460;
+                            leafY = branchY - 380 + (leafIndex * 92);
                         }
 
                         const leafEl = createNodeElement(leaf, leafX, leafY, false);
