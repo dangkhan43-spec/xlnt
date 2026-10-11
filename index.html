@@ -88,7 +88,7 @@
             <div>
                 <h1 class="font-extrabold text-lg text-white tracking-wide flex items-center gap-2">
                     Xử lý Nước Thải: Phương pháp Cơ học
-                    <span class="text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-full font-semibold uppercase tracking-wider">Presentation Dark Mode</span>
+                    <span class="text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-full font-semibold uppercase tracking-wider">Presentation Mode</span>
                 </h1>
                 <p class="text-xs text-slate-400">Sơ đồ tư duy tương tác chuyên sâu & Hình ảnh công trình trực quan</p>
             </div>
@@ -116,7 +116,7 @@
     </header>
 
     <div class="canvas-container overflow-hidden relative flex-1" id="canvasContainer">
-        <div id="mindmapWorkspace" class="absolute inset-0 z-10 w-[7000px] h-[7000px]" style="transform-origin: 0 0;">
+        <div id="mindmapWorkspace" class="absolute inset-0 z-10 w-[8000px] h-[8000px]" style="transform-origin: 0 0;">
             <svg id="mindmapLines" class="absolute inset-0 w-full h-full pointer-events-none z-0"></svg>
             <div id="nodesContainer" class="absolute inset-0 pointer-events-none z-10"></div>
         </div>
@@ -242,14 +242,14 @@
                             title: "Cơ chế tác động",
                             type: "leaf",
                             icon: "fa-bars",
-                            desc: "Giữ lại các tạp chất có kích thước lớn khi cho dòng nước đi qua các khe hở hoặc lưới chắn rác chuyên dụng."
-                        },
-                        {
-                            id: "bc-3",
-                            title: "Lực trọng trường, Ly tâm & Tuyển nổi",
-                            type: "leaf",
-                            icon: "fa-circle-down",
-                            desc: "Dựa vào sự chênh lệch tỷ trọng giữa cặn và nước để lắng các hạt cặn nặng xuống đáy (trọng trường) hoặc tuyển nổi các chất nhẹ nhờ lực ly tâm và bám dính bọt khí."
+                            desc: "Giữ lại các tạp chất có kích thước lớn khi cho dòng nước đi qua các khe hở hoặc lưới chắn rác chuyên dụng.",
+                            hasSubNodes: true,
+                            collapsed: false,
+                            subChildren: [
+                                { id: "sub-bc-1", title: "Lực cản cơ học", type: "sub-leaf", icon: "fa-hand", desc: "Giữ lại các tạp chất thô thông qua khe hở hoặc vật cản." },
+                                { id: "sub-bc-2", title: "Lực trọng trường", type: "sub-leaf", icon: "fa-weight-hanging", desc: "Lắng đọng các hạt cặn có trọng lượng riêng lớn hơn nước." },
+                                { id: "sub-bc-3", title: "Lực ly tâm và sự bám dính bọt khí", type: "sub-leaf", icon: "fa-tornado", desc: "Tách các chất lơ lửng, dầu mỡ bằng lực ly tâm hoặc tuyển nổi bọt khí." }
+                            ]
                         }
                     ]
                 },
@@ -267,8 +267,8 @@
                             icon: "fa-bars-staggered",
                             desc: "Giữ những rác bẩn thô (giấy, rau, cỏ, rác…), nhằm đảm bảo đảm cho máy bơm, các công trình và thiết bị xử lý nước thải hoạt động ổn định",
                             specs: [
-                                { text: "Song chắn rác", imageUrl: "dan_link_vao_day" },
-                                { text: "Lưới chắn rác", imageUrl: "dan_link_vao_day" }
+                                { text: "Song chắn rác", imageUrl: "https://cdn.upanhlaylink.com/i/PzOO9cDm.png" },
+                                { text: "Lưới chắn rác", imageUrl: "https://cdn.upanhlaylink.com/i/Ycmkyoam.png" }
                             ]
                         },
                         {
@@ -278,10 +278,9 @@
                             icon: "fa-gear",
                             desc: "Cắt và nghiền vụn rác thành các hạt, các mảnh nhỏ lơ lửng trong nước thải để không làm tắc ống, không gây hại cho bơm",
                             specs: [
-                                { text: "Máy nghiền 1 trục", imageUrl: "dan_link_vao_day" },
-                                { text: "Máy nghiền đa trục", imageUrl: "dan_link_vao_day" },
-                                { text: "Máy nghiền búa", imageUrl: "dan_link_vao_day" },
-                                { text: "Máy nghiền cánh quạt", imageUrl: "dan_link_vao_day" }
+                                { text: "Máy nghiền 1 trục", imageUrl: "https://cdn.upanhlaylink.com/i/lN7lgm9l.png" },
+                                { text: "Máy nghiền đa trục", imageUrl: "https://cdn.upanhlaylink.com/i/LeutpMyz.png" },
+                                { text: "Máy nghiền cánh quạt", imageUrl: "https://cdn.upanhlaylink.com/i/x1NwwKhW.png" }
                             ]
                         },
                         {
@@ -291,8 +290,8 @@
                             icon: "fa-mountain",
                             desc: "Là đơn vị dùng để khắc phục các vấn đề sinh ra do sự biến động về lưu lượng và tải lượng dòng vào, đảm bảo hiệu quả của các công trình xử lý sau, đảm bảo đầu ra sau xử lý, giảm chi phí và kích thước của các thiết bị sau này",
                             specs: [
-                                { text: "Bể điều hòa lưu lượng", imageUrl: "dan_link_vao_day" },
-                                { text: "Bể điều hòa lưu lượng và chất lượng ", imageUrl: "dan_link_vao_day" },
+                                { text: "Bể điều hòa lưu lượng", imageUrl: "https://cdn.upanhlaylink.com/i/iQocWWBM.jpg" },
+                                { text: "Bể điều hòa lưu lượng và chất lượng ", imageUrl: "https://cdn.upanhlaylink.com/i/cNjQyDkf.png" },
                             ]
                         },
                         {
@@ -302,10 +301,10 @@
                             icon: "fa-wave-square",
                             desc: "loại bỏ cặn thô, nặmg như: cát, sỏi, mảnh thủy tinh, mảnh kim loại, tro, than vụn… nhằm bảo vệ các thiết bị cơ khí dễ bị mài mòn, giảm cặn nặng ở các công đoạn xử lý sau",
                             specs: [
-                                { text: "Bể lắng cát ngang", imageUrl: "dan_link_vao_day" },
-                                { text: "Bể lắng cát đứng", imageUrl: "dan_link_vao_day" },
-                                { text: "Bể lắng cát tiếp tuyến", imageUrl: "dan_link_vao_day" },
-                                { text: "Bể lắng cát làm thoáng", imageUrl: "dan_link_vao_day" }
+                                { text: "Bể lắng cát ngang", imageUrl: "https://cdn.upanhlaylink.com/i/angfLwjR.png" },
+                                { text: "Bể lắng cát đứng", imageUrl: "https://cdn.upanhlaylink.com/i/xb76Vsl2.png" },
+                                { text: "Bể lắng cát tiếp tuyến", imageUrl: "https://cdn.upanhlaylink.com/i/xL25hIZk.png" },
+                                { text: "Bể lắng cát làm thoáng", imageUrl: "https://cdn.upanhlaylink.com/i/qEiSNu2x.png" }
                             ]
                         },
                         {
@@ -315,8 +314,9 @@
                             icon: "fa-layer-group",
                             desc: "Lắng là phương pháp đơn giản nhất để tách các chất bẩn không hòa tan ra khỏi nước thải",
                             specs: [
-                                { text: "Bể lắng đợt 1", imageUrl: "dan_link_vao_day" },
-                                { text: "Bể lắng đợt 2", imageUrl: "dan_link_vao_day" },
+                                { text: "Bể lắng ngang", imageUrl: "https://cdn.upanhlaylink.com/i/7VU2Ie8r.png" },
+                                { text: "Bể lắng đứng", imageUrl: "https://cdn.upanhlaylink.com/i/bUhA1JKd.jpg" },
+                                { text: "Bể lắng ly tâm", imageUrl: "https://cdn.upanhlaylink.com/i/DTXaedBc.png" }
                             ]
                         },
                         {
@@ -326,11 +326,8 @@
                             icon: "fa-droplet",
                             desc: "Tách các tạp chất phân tán có kích thước nhỏ khỏi nước thải, mà các bể lắng không thể loại được chúng",
                             specs: [
-                                { text: "Bể lọc chậm", imageUrl: "dan_link_vao_day" },
-                                { text: "Bể lọc nhanh", imageUrl: "dan_link_vao_day" },
-                                { text: "Bể lọc cao tốc", imageUrl: "dan_link_vao_day" },
-                                { text: "Bể lọc không áp", imageUrl: "dan_link_vao_day" },
-                                { text: "Bể lọc có áp", imageUrl: "dan_link_vao_day" }
+                                { text: "Bể lọc không áp", imageUrl: "https://cdn.upanhlaylink.com/i/9BdGnF6c.jpg" },
+                                { text: "Bể lọc có áp", imageUrl: "https://cdn.upanhlaylink.com/i/QwkH8a74.png" }
                             ]
                         },
                         {
@@ -340,9 +337,9 @@
                             icon: "fa-filter-circle-dollar",
                             desc: "Tách các chất lơ lửng, làm đặc bùn sinh học",
                             specs: [
-                                { text: "Phân tán không khí bằng thiết bị cơ học", imageUrl: "dan_link_vao_day" },
-                                { text: "Tách không khí với nước", imageUrl: "dan_link_vao_day" },
-                                { text: "Tuyển nổi điện", imageUrl: "dan_link_vao_day" }
+                                { text: "Phân tán không khí bằng thiết bị cơ học", imageUrl: "https://cdn.upanhlaylink.com/i/2FbrQBhQ.png" },
+                                { text: "Tách không khí với nước", imageUrl: "https://cdn.upanhlaylink.com/i/VW9xvdyf.png" },
+                                { text: "Tuyển nổi điện", imageUrl: "https://cdn.upanhlaylink.com/i/dLZ9Q7fs.webp" }
                             ]
                         },
                         {
@@ -352,8 +349,8 @@
                             icon: "fa-box-archive",
                             desc: "Tách dầu mỡ thừa và rác thải rắn ra khỏi nước thải",
                             specs: [
-                                { text: "Bể tách mỡ 2 ngăn", imageUrl: "dan_link_vao_day" },
-                                { text: "Bể tách mỡ 3 ngăn", imageUrl: "dan_link_vao_day" },
+                                { text: "Bể tách mỡ 2 ngăn", imageUrl: "https://cdn.upanhlaylink.com/i/t6Z3OkOw.webp" },
+                                { text: "Bể tách mỡ 3 ngăn", imageUrl: "https://cdn.upanhlaylink.com/i/gSwBs6XN.png" },
                             ]
                         }
                     ]
@@ -372,8 +369,8 @@
         const nodesContainer = document.getElementById('nodesContainer');
         const container = document.getElementById('canvasContainer');
 
-        const rootX = 3500;
-        const rootY = 3500;
+        const rootX = 4000;
+        const rootY = 4000;
 
         function updateTransform() {
             workspace.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
@@ -392,14 +389,14 @@
         }
 
         function resetView() {
-            scale = 0.75;
+            scale = 0.7;
             panX = container.clientWidth / 2 - rootX * scale;
             panY = container.clientHeight / 2 - rootY * scale;
             updateTransform();
         }
 
         function zoomToPoint(clientX, clientY, factor) {
-            const newScale = Math.max(0.4, Math.min(2.5, scale * factor));
+            const newScale = Math.max(0.3, Math.min(2.5, scale * factor));
             if (newScale === scale) return;
 
             panX = clientX - (clientX - panX) * (newScale / scale);
@@ -463,13 +460,13 @@
                 let branchY = rootY;
 
                 if (index === 0) {
-                    branchX = rootX - 580;
-                    branchY = rootY - 320;
+                    branchX = rootX - 430;
+                    branchY = rootY - 180;
                 } else if (index === 1) {
-                    branchX = rootX - 580;
-                    branchY = rootY + 320;
+                    branchX = rootX - 430;
+                    branchY = rootY + 180;
                 } else if (index === 2) {
-                    branchX = rootX + 580;
+                    branchX = rootX + 520;
                     branchY = rootY;
                 }
 
@@ -482,14 +479,14 @@
                         let leafY = branchY;
 
                         if (branch.id === 'muc-dich') {
-                            leafX = branchX - 440;
-                            leafY = branchY - 170 + (leafIndex * 170);
+                            leafX = branchX - 430;
+                            leafY = branchY - 180 + (leafIndex * 180);
                         } else if (branch.id === 'ban-chat') {
-                            leafX = branchX - 440;
-                            leafY = branchY - 110 + (leafIndex * 110);
+                            leafX = branchX - 430;
+                            leafY = branchY - 80 + (leafIndex * 160);
                         } else if (branch.id === 'cong-trinh') {
-                            leafX = branchX + 440;
-                            leafY = branchY - 380 + (leafIndex * 105);
+                            leafX = branchX + 520;
+                            leafY = branchY - 450 + (leafIndex * 130);
                         }
 
                         const leafEl = createNodeElement(leaf, leafX, leafY, false);
@@ -498,7 +495,7 @@
                         if (leaf.hasSubNodes && leaf.subChildren && !leaf.collapsed) {
                             leaf.subChildren.forEach((sub, subIdx) => {
                                 let subX = leafX - 380;
-                                let subY = leafY - 55 + (subIdx * 55);
+                                let subY = leafY - 65 + (subIdx * 65);
                                 const subEl = createNodeElement(sub, subX, subY, false);
                                 nodesContainer.appendChild(subEl);
                             });
@@ -519,29 +516,29 @@
             const hasChildren = (node.type === 'branch' || (node.hasSubNodes && node.subChildren));
 
             if (isRoot) {
-                el.style.width = '360px';
-                el.style.left = `${x - 180}px`;
-                el.style.top = `${y - 65}px`;
-                el.className = `node-card absolute rounded-2xl border-2 border-cyan-400 bg-gradient-to-tr from-slate-950 via-slate-900 to-cyan-950 p-4 flex items-center space-x-3.5 z-20 shadow-2xl shadow-cyan-500/30 text-white pointer-events-auto`;
+                el.style.width = '400px';
+                el.style.left = `${x - 200}px`;
+                el.style.top = `${y - 75}px`;
+                el.className = `node-card absolute rounded-2xl border-2 border-cyan-400 bg-gradient-to-tr from-slate-950 via-slate-900 to-cyan-950 p-5 flex items-center space-x-4 z-20 shadow-2xl shadow-cyan-500/30 text-white pointer-events-auto`;
             } else if (node.type === 'branch') {
-                el.style.width = '340px';
-                el.style.left = `${x - 170}px`;
-                el.style.top = `${y - 45}px`;
-                el.className = `node-card absolute rounded-2xl border border-slate-700 bg-darkCard/95 p-3.5 flex items-center space-x-3 z-20 shadow-xl text-slate-100 border-l-4 border-l-cyan-400 font-semibold pointer-events-auto`;
-            } else if (isSubLeaf) {
-                el.style.width = '280px';
-                el.style.left = `${x - 140}px`;
-                el.style.top = `${y - 25}px`;
-                el.className = `node-card absolute rounded-xl border border-slate-700 bg-slate-900/95 p-2.5 flex items-center space-x-2 z-20 shadow-md text-slate-300 text-[11px] pointer-events-auto opacity-95`;
-            } else {
                 el.style.width = '380px';
                 el.style.left = `${x - 190}px`;
-                el.style.top = `${y - 40}px`;
+                el.style.top = `${y - 50}px`;
+                el.className = `node-card absolute rounded-2xl border border-slate-700 bg-darkCard/95 p-4 flex items-center space-x-3.5 z-20 shadow-xl text-slate-100 border-l-4 border-l-cyan-400 font-semibold pointer-events-auto`;
+            } else if (isSubLeaf) {
+                el.style.width = '320px';
+                el.style.left = `${x - 160}px`;
+                el.style.top = `${y - 30}px`;
+                el.className = `node-card absolute rounded-xl border border-slate-700 bg-slate-900/95 p-3 flex items-center space-x-2.5 z-20 shadow-md text-slate-300 text-xs pointer-events-auto opacity-95`;
+            } else {
+                el.style.width = '420px';
+                el.style.left = `${x - 210}px`;
+                el.style.top = `${y - 45}px`;
                 const interactiveClass = isInteractiveLeaf ? 'interactive cursor-pointer hover:border-cyan-400' : 'opacity-95';
-                el.className = `node-card absolute rounded-2xl border border-slate-800 bg-slate-900/95 p-3.5 flex items-center space-x-2.5 z-20 shadow-lg text-slate-200 text-xs pointer-events-auto ${interactiveClass}`;
+                el.className = `node-card absolute rounded-2xl border border-slate-800 bg-slate-900/95 p-4 flex items-center space-x-3 z-20 shadow-lg text-slate-200 text-xs pointer-events-auto ${interactiveClass}`;
             }
 
-            let iconBg = isRoot ? 'bg-cyan-400 text-slate-950 font-bold' : node.type === 'branch' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : isSubLeaf ? 'bg-slate-800 text-emerald-400' : 'bg-slate-800 text-cyan-400';
+            let iconBg = isRoot ? 'bg-cyan-400 text-slate-950 font-bold text-lg' : node.type === 'branch' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-base' : isSubLeaf ? 'bg-slate-800 text-emerald-400 text-sm' : 'bg-slate-800 text-cyan-400 text-sm';
 
             let subtext = '';
             if (isRoot) {
@@ -555,19 +552,19 @@
             }
 
             let html = `
-                <div class="${isSubLeaf ? 'w-7 h-7' : 'w-9 h-9'} rounded-xl flex-shrink-0 flex items-center justify-center ${iconBg} ${isSubLeaf ? 'text-xs' : 'text-sm'} shadow-md">
+                <div class="${isSubLeaf ? 'w-8 h-8' : 'w-10 h-10'} rounded-xl flex-shrink-0 flex items-center justify-center ${iconBg} shadow-md">
                     <i class="fa-solid ${node.icon}"></i>
                 </div>
                 <div class="flex-1 min-w-0">
-                    <h4 class="font-extrabold tracking-tight whitespace-normal leading-snug ${isRoot ? 'text-white text-sm whitespace-pre-line' : node.type === 'branch' ? 'text-white text-xs' : isSubLeaf ? 'text-slate-200 text-[11px]' : 'text-slate-100 text-xs'}">${node.title}</h4>
-                    ${subtext ? `<p class="text-[10px] mt-0.5 ${isRoot ? 'text-cyan-300 font-semibold' : node.type === 'branch' ? 'text-slate-400' : isInteractiveLeaf ? 'text-cyan-400 font-medium' : 'text-slate-400'}">${subtext}</p>` : ''}
+                    <h4 class="font-extrabold tracking-tight whitespace-normal leading-relaxed ${isRoot ? 'text-white text-base whitespace-pre-line' : node.type === 'branch' ? 'text-white text-sm' : isSubLeaf ? 'text-slate-200 text-xs' : 'text-slate-100 text-xs'}">${node.title}</h4>
+                    ${subtext ? `<p class="text-[11px] mt-1 ${isRoot ? 'text-cyan-300 font-semibold' : node.type === 'branch' ? 'text-slate-400' : isInteractiveLeaf ? 'text-cyan-400 font-medium' : 'text-slate-400'}">${subtext}</p>` : ''}
                 </div>
             `;
 
             if (hasChildren) {
                 html += `
-                    <button onclick="toggleNode(event, '${node.id}')" class="w-6 h-6 rounded-xl bg-slate-800 hover:bg-cyan-400 hover:text-slate-950 text-cyan-400 flex items-center justify-center transition flex-shrink-0 shadow-md border border-slate-700 cursor-pointer pointer-events-auto" title="Thu gọn / Mở rộng">
-                        <i class="fa-solid ${node.collapsed ? 'fa-plus' : 'fa-minus'} text-[10px]"></i>
+                    <button onclick="toggleNode(event, '${node.id}')" class="w-7 h-7 rounded-xl bg-slate-800 hover:bg-cyan-400 hover:text-slate-950 text-cyan-400 flex items-center justify-center transition flex-shrink-0 shadow-md border border-slate-700 cursor-pointer pointer-events-auto" title="Thu gọn / Mở rộng">
+                        <i class="fa-solid ${node.collapsed ? 'fa-plus' : 'fa-minus'} text-xs"></i>
                     </button>
                 `;
             }
@@ -618,7 +615,7 @@
                 if (branchRect) {
                     const startPoint = getBorderIntersection(rootRect, branchRect);
                     const endPoint = getBorderIntersection(branchRect, rootRect);
-                    drawNeonCurve(svg, startPoint.x, startPoint.y, endPoint.x, endPoint.y, '#38bdf8', 3.5);
+                    drawNeonCurve(svg, startPoint.x, startPoint.y, endPoint.x, endPoint.y, '#38bdf8', 4);
 
                     if (!branch.collapsed && branch.children) {
                         branch.children.forEach(leaf => {
@@ -626,7 +623,7 @@
                             if (leafRect) {
                                 const bStart = getBorderIntersection(branchRect, leafRect);
                                 const lEnd = getBorderIntersection(leafRect, branchRect);
-                                drawNeonCurve(svg, bStart.x, bStart.y, lEnd.x, lEnd.y, '#64748b', 2);
+                                drawNeonCurve(svg, bStart.x, bStart.y, lEnd.x, lEnd.y, '#64748b', 2.5);
 
                                 if (leaf.hasSubNodes && leaf.subChildren && !leaf.collapsed) {
                                     leaf.subChildren.forEach(sub => {
@@ -634,7 +631,7 @@
                                         if (subRect) {
                                             const lStart = getBorderIntersection(leafRect, subRect);
                                             const sEnd = getBorderIntersection(subRect, leafRect);
-                                            drawNeonCurve(svg, lStart.x, lStart.y, sEnd.x, sEnd.y, '#34d399', 1.5);
+                                            drawNeonCurve(svg, lStart.x, lStart.y, sEnd.x, sEnd.y, '#34d399', 2);
                                         }
                                     });
                                 }
